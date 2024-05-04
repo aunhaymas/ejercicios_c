@@ -25,11 +25,6 @@ typedef float t_mat[MFD][MFH];
 
 int my_atoi(const char *string);
 int cuantos_dias(int mes);
-void ingresar_mes()
-{
-
-}
-
 void validar_mes(int *mes)
 {
 	int valor;
@@ -38,8 +33,6 @@ void validar_mes(int *mes)
 	fgets(s_valor,3,stdin);
 	fflush(stdin);
 	valor = my_atoi(s_valor);
-	//scanf("%d",&valor);
-	//
 	while(valor < 1 || valor >12)
 	{
 		printf("Ingrese número de mes (1 a 12): ");
@@ -52,14 +45,15 @@ void validar_mes(int *mes)
 
 void mostrar_mat(t_mat mat, int mes, float dia_max[MFD],float dia_min[MFD],float *mes_max,float *mes_min)
 {
-	mes_max=0;
+	*mes_max=0.0f;
+	*mes_min=99999.0f;
 	int horas = 24;
 	int d,h;
 	int dias = cuantos_dias(mes);
 	for(d=0;d<dias;d++)
 	{
-		dia_max[d]=0;
-		dia_min[d]=99999;
+		dia_max[d]=0.0f;
+		dia_min[d]=99999.0f;
 		printf("   Dia %d\nHora\tTemperatura\n",d+1);
 		for(h=0;h<horas;h++)
 		{
@@ -71,10 +65,15 @@ void mostrar_mat(t_mat mat, int mes, float dia_max[MFD],float dia_min[MFD],float
 		}
 		printf("Temperatura maxima del dia: %.2f\n",dia_max[d]);
 		printf("Temperatura minima del dia: %.2f\n",dia_min[d]);
-
-
+		if(*mes_max<dia_max[d])
+			*mes_max=dia_max[d];
+		if(*mes_min>dia_min[d])
+			*mes_min=dia_min[d];
 		printf("\n");
 	}
+	printf("Temperatura maxima del mes: %.2f\n",*mes_max);
+	printf("Temperatura minima del mes: %.2f\n",*mes_min);
+
 }
 float fgenerar_temp(float tmin, float tmax)
 {
