@@ -1,12 +1,12 @@
 /******************************************************************************
-                    Copyright (c) 2024 Alfredo Godoy <a.k.a aunhaymas> 11:24:57
+                    Copyright (c) 2024 Alfredo Godoy <a.k.a aunhaymas> 21:20:12
 *******************************************************************************/
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-#include <math.h>
+#include <threads.h>
 #include <time.h>
 /*
 Se tiene un registro de la temperatura por hora (0 a 23) por día (1 a n) de
@@ -21,8 +21,7 @@ la máxima y la mínima temperatura del mes
 
 #define MFD 31	//Días máximos
 #define MFH 24	//Horas
-typedef float t_mat[MFD][MFH];
-
+typedef float t_mat[MFD][MFH]; //matriz[dias][horas]
 int my_atoi(const char *string);
 int cuantos_dias(int mes);
 void validar_mes(int *mes)
@@ -42,7 +41,6 @@ void validar_mes(int *mes)
 	}
 	*mes = valor;
 }
-
 void mostrar_mat(t_mat mat, int mes, float dia_max[MFD],float dia_min[MFD],float *mes_max,float *mes_min)
 {
 	*mes_max=0.0f;
@@ -54,7 +52,7 @@ void mostrar_mat(t_mat mat, int mes, float dia_max[MFD],float dia_min[MFD],float
 	{
 		dia_max[d]=0.0f;
 		dia_min[d]=99999.0f;
-		printf("   Dia %d\nHora\tTemperatura\n",d+1);
+		printf("----Dia %d--------------------------------------------------------------------------------\nHora\tTemperatura\n",d+1);
 		for(h=0;h<horas;h++)
 		{
 			printf("%d\t%.2f\n",h,mat[d][h]);
@@ -85,24 +83,17 @@ void cargar_mat(t_mat mat,int mes)
 	int d,h;
 	int dias = cuantos_dias(mes);
 	for(d=0;d<dias;d++)
-	{
 		for(h=0;h<24;h++)
-		{
 			mat[d][h] = fgenerar_temp(2.0f,37.1f);
-		}
-	}
 }
 
 int my_atoi(const char *string)
 {
-	//48
 	int numero = 0;
 	while(*string!='\n' && *string!='\0')
 	{
 		if(*string>='0' && *string<='9')
-		{
 			numero= numero*10 + *string - '0';
-		}
 		string++;
 	}
 	return numero;
@@ -137,18 +128,23 @@ int cuantos_dias(int mes)
 }
 int main(void)
 {    
-	/* *nombre_mes 		en lugar de 
-	 *  nombre_mes[12][]
+	/*  nombre_mes[][10]
 	 *			   |  |
 	 *		 	mes  longitud del nombre
-
 		*nombre_mes[12] ó *nombre_mes[]
 	las dimensiones de un array multidimensional deben especificarse
-	completamente, excepto la primera dimensión.
+	completamente, excepto la primera dimensión, porque solo indica la posición
+	donde comienza cada vector, mientras que la segunda establece su longitud.
+		const char *nombre_mes[12] declara 12 punteros char cuyas longitudes se 
+	establecen explicitamente (enero = 5+1, Mayo=4+1).
+
+		no hace falta especificar que son 12 punteros, podria declarar:
+	const char *nombre_mes[] ó nombre_mes[][] y funcionaría, siempre y cuando 
+	declare explícitamente los elementos de la matriz con al menos 1 elemento. 
+	De esa forma el compilador sabrá que longitud asignarle a cada puntero.
 	*/
 	const char *nombre_mes[12]= {"Enero","Febrero","Marzo","Abril","Mayo",
 		"Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"};
-	char numero[100];
 	t_mat temperatura;
 	int mes;
 	float temp_mes_max,temp_mes_min;
