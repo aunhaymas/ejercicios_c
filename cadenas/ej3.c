@@ -1,6 +1,7 @@
 /******************************************************************************
                     Copyright (c) 2024 Alfredo Godoy <a.k.a aunhaymas> 21:11:37
 *******************************************************************************/
+#include <complex.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
@@ -52,4 +53,13 @@ void cantidad_palabras(t_cadena cadena, int *cant){
 		if(cadena[i] ==' ' && cadena[i+1] != ' ')
 			(*cant)++;
 	}
+}
+int cantidad_palabras_oracion(t_cadena cadena){
+	int cant=0,i;
+	size_t tam = strlen(cadena);
+	for(i=0 ; i< tam-1 ; i++){
+		if(cadena[i] == ' ' && cadena[i+1] != ' ')
+			cant++;
+	}
+	return cant;
 }
